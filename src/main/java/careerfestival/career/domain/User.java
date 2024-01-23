@@ -81,7 +81,6 @@ public class User extends BaseEntity {
     ----------위에는 회원가입에 직접 사용되는 값들----------------
      */
 
-
     private Timestamp inactiveDate;
 
     // status와 inactivedate는 회원 탈퇴, 게시글 삭제 시 필요 기능

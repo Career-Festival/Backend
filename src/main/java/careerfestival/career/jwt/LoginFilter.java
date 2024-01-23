@@ -1,8 +1,10 @@
 package careerfestival.career.jwt;
 
+import careerfestival.career.domain.User;
 import careerfestival.career.domain.enums.Role;
 import careerfestival.career.login.dto.CustomUserDetails;
 import careerfestival.career.login.dto.UserSignInRequestDto;
+import careerfestival.career.login.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -30,6 +32,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final UserService userService;
 
 
     @Override
@@ -80,7 +83,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        String email = customUserDetails.getUsername();
+        User findUser = userService.findUserByCustomUserDetails(customUserDetails);
+        String email = findUser.getEmail();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -89,9 +93,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String authority = auth.getAuthority();
         Role role = Role.fromString(authority);
 
-        String token = jwtUtil.createJwt(email, role.toString(), 600000L); //10분
-
-        response.addHeader("Authorization", "Bearer " + token);
+        String accessToken = jwtUtil.createAccessToken(email, role.toString(), 600000L); //10분
+        response.addHeader("AccessToken", "Bearer " + accessToken);
 
         System.out.println("------------------------");
         System.out.println("Login Success");

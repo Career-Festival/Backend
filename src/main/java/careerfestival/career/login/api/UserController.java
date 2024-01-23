@@ -6,18 +6,14 @@ import careerfestival.career.login.dto.CustomUserDetails;
 import careerfestival.career.myPage.dto.UpdateMypageResponseDto;
 import careerfestival.career.login.dto.UserSignUpRequestDto;
 import careerfestival.career.login.service.UserService;
-import jakarta.servlet.ServletException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping
@@ -33,7 +29,7 @@ public class UserController {
     public ResponseEntity<Void> signUp(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
         User user = userService.signUp(userSignUpRequestDto);
 
-        String token = jwtUtil.createJwt(user.getEmail(), String.valueOf(user.getRole()), 600000L);
+        String token = jwtUtil.createAccessToken(user.getEmail(), String.valueOf(user.getRole()), 600000L);
 
         // 회원가입 이후 리다이렉션할 URL 생성
         String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
