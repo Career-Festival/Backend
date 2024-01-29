@@ -1,4 +1,4 @@
-package careerfestival.career.login.dto;
+package careerfestival.career.join.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

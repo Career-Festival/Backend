@@ -24,7 +24,6 @@ public class SecurityConfig {
 
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
-
     private final JWTUtil jwtUtil;
 
     @Bean
@@ -44,7 +43,8 @@ public class SecurityConfig {
 
         RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
 
-        hierarchy.setHierarchy("ROLE_ORGANIZER > ROLE_PARTICIPANT");
+        hierarchy.setHierarchy("ROLE_PARTICIPANT > ROLE_USER\n" +
+                "ROLE_ORGANIZER > ROLE_PARTICIPANT");
 
         return hierarchy;
     }
@@ -64,11 +64,20 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
+        //oauth2.0 로그인 설정
+//        http
+//                .oauth2Login((oauth2) -> oauth2
+//                        .successHandler(oAuth2LoginSuccessHandler)
+//                        .failureHandler(oAuth2LoginFailureHandler)
+//                        .userInfoEndpoint(userInfoEndpointConfig ->
+//                                userInfoEndpointConfig.userService(customOAuth2UserService)));
+
+
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/login", "/join", "/join/detail").permitAll()
-                        .requestMatchers("/mypage", "/mypage/update").hasRole("PARTICIPANT")
+                        .requestMatchers("/", "/oauth2/**", "/login/**", "/join/**").permitAll()
+                        .requestMatchers("/mypage/**").hasRole("USER")
                         .anyRequest().permitAll()
                 );
 

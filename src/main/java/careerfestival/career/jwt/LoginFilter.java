@@ -1,10 +1,8 @@
 package careerfestival.career.jwt;
 
-import careerfestival.career.domain.User;
 import careerfestival.career.domain.enums.Role;
-import careerfestival.career.login.dto.CustomUserDetails;
-import careerfestival.career.login.dto.UserSignInRequestDto;
-import careerfestival.career.login.service.UserService;
+import careerfestival.career.join.dto.CustomUserDetails;
+import careerfestival.career.join.dto.UserSignInRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -18,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -32,7 +31,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-    private final UserService userService;
 
 
     @Override
@@ -83,8 +81,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        User findUser = userService.findUserByCustomUserDetails(customUserDetails);
-        String email = findUser.getEmail();
+        String email = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -93,8 +90,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String authority = auth.getAuthority();
         Role role = Role.fromString(authority);
 
-        String accessToken = jwtUtil.createAccessToken(email, role.toString(), 600000L); //10분
-        response.addHeader("AccessToken", "Bearer " + accessToken);
+        String token = jwtUtil.createToken(email, role.toString());
+
+        response.addHeader("Authorization", "Bearer " + token);
 
         System.out.println("------------------------");
         System.out.println("Login Success");

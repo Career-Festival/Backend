@@ -1,11 +1,11 @@
-package careerfestival.career.login.service;
+package careerfestival.career.join.service;
 
 import careerfestival.career.domain.User;
 import careerfestival.career.domain.enums.KeywordName;
-import careerfestival.career.login.dto.CustomUserDetails;
+import careerfestival.career.join.dto.CustomUserDetails;
 import careerfestival.career.myPage.dto.MyPageResponseDto;
 import careerfestival.career.myPage.dto.UpdateMypageResponseDto;
-import careerfestival.career.login.dto.UserSignUpRequestDto;
+import careerfestival.career.join.dto.UserSignUpRequestDto;
 import careerfestival.career.repository.RegionRepository;
 import careerfestival.career.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class UserService {
 
     @Transactional
     public void findUserByEmailAndUpdate(String email, UpdateMypageResponseDto updateMypageResponseDto){
-        User findUser = userRepository.findByEmail(email);
+        User findUser = userRepository.findUserByEmail(email);
         findUser.update(updateMypageResponseDto);
         String city = updateMypageResponseDto.getCity();
         String addressLine = updateMypageResponseDto.getAddressLine();
@@ -63,11 +63,11 @@ public class UserService {
 
     @Transactional
     public User findUserByCustomUserDetails(CustomUserDetails customUserDetails){
-        return userRepository.findByEmail(customUserDetails.getUsername());
+        return userRepository.findUserByEmail(customUserDetails.getUsername());
     }
 
     @Transactional
-    public MyPageResponseDto fillMyPage(User user) {
+    public MyPageResponseDto showMyPage(User user) {
         MyPageResponseDto myPageResponseDto = new MyPageResponseDto();
         myPageResponseDto.setName(user.getName());
         myPageResponseDto.setEmail(user.getEmail());

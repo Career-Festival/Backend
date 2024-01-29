@@ -1,8 +1,8 @@
-package careerfestival.career.login.service;
+package careerfestival.career.join.service;
 
 import careerfestival.career.domain.User;
 import careerfestival.career.repository.UserRepository;
-import careerfestival.career.login.dto.CustomUserDetails;
+import careerfestival.career.join.dto.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,9 +20,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         //DB에서 조회
-        User findByEmail = userRepository.findByEmail(username);
+        User findByEmail = userRepository.findUserByEmail(username);
 
-        if (findByEmail != null) {
+        if (userRepository.existsByEmail(username)) {
             return new CustomUserDetails(findByEmail);
         }
         return null;

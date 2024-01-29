@@ -1,16 +1,17 @@
 package careerfestival.career.myPage.api;
 
 import careerfestival.career.domain.User;
-import careerfestival.career.login.dto.CustomUserDetails;
+import careerfestival.career.join.dto.CustomUserDetails;
 import careerfestival.career.myPage.dto.MyPageResponseDto;
 import careerfestival.career.myPage.dto.UpdateMypageResponseDto;
-import careerfestival.career.login.service.UserService;
+import careerfestival.career.join.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -26,10 +27,11 @@ public class MyPageController {
     @ResponseBody
     public MyPageResponseDto myPage (@AuthenticationPrincipal CustomUserDetails customUserDetails){
         User findUser = userService.findUserByCustomUserDetails(customUserDetails);
-        return userService.fillMyPage(findUser);
+        return userService.showMyPage(findUser);
     }
 
 
+    @Transactional
     @PatchMapping("/mypage/update")
     public ResponseEntity<Void> updateMember(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody UpdateMypageResponseDto updateMypageResponseDto) {
         userService.findUserByEmailAndUpdate(customUserDetails.getUsername(), updateMypageResponseDto);
@@ -42,9 +44,7 @@ public class MyPageController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", redirectUrl);
 
-        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 
-
 }
-

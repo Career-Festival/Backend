@@ -1,7 +1,8 @@
-    package careerfestival.career.login.dto;
+    package careerfestival.career.join.dto;
 
     import careerfestival.career.domain.User;
     import careerfestival.career.domain.enums.Role;
+    import careerfestival.career.domain.enums.SocialType;
     import lombok.*;
 
     @Getter
@@ -15,6 +16,7 @@
         private String checkPassword;
         private String name;
         private Role role;
+        private SocialType socialType;
 
         @Builder
         public User toEntity() {
@@ -23,6 +25,7 @@
                     .password(password)
                     .name(name)
                     .role(role)
+                    .socialType(socialType)
                     .build();
         }
     }

@@ -1,10 +1,7 @@
 package careerfestival.career.domain;
 
 import careerfestival.career.domain.common.BaseEntity;
-import careerfestival.career.domain.enums.Gender;
-import careerfestival.career.domain.enums.KeywordName;
-import careerfestival.career.domain.enums.Role;
-import careerfestival.career.domain.enums.UserStatus;
+import careerfestival.career.domain.enums.*;
 import careerfestival.career.domain.mapping.*;
 import careerfestival.career.domain.mapping.Comment;
 import careerfestival.career.domain.mapping.Follow;
@@ -14,6 +11,7 @@ import careerfestival.career.domain.mapping.Wish;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
@@ -35,7 +33,8 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20, name = "name")
     private String name;
 
-    @Column(nullable = false, length = 300, name = "password")
+    //소셜 로그인할때 null 로 들어감
+    @Column(length = 300, name = "password")
     private String password;
 
     @Email
@@ -103,10 +102,10 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Participate> participate = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Organizer organizer;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ImageData imageData;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -116,6 +115,11 @@ public class User extends BaseEntity {
     private List<Record> records = new ArrayList<>();
 
 
+    //일반 로그인, 소셜로그인 확인용
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
+
+//    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
     public void addRecord(Record record) {
         records.add(record);
@@ -125,7 +129,8 @@ public class User extends BaseEntity {
 
     public void updatePassword(String password) {
         if(password==null) return;
-        this.password = password;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.password = bCryptPasswordEncoder.encode(password);
     }
 
     public void updateName(String name) {
@@ -177,6 +182,10 @@ public class User extends BaseEntity {
         if(addressLine==null) return;
 
         this.addressLine = addressLine;
+    }
+
+    public void updateSocialType(SocialType socialType) {
+        this.socialType = socialType;
     }
 
     @Transactional

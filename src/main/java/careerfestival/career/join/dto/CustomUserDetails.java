@@ -1,4 +1,4 @@
-package careerfestival.career.login.dto;
+package careerfestival.career.join.dto;
 
 import careerfestival.career.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class CustomUserDetails implements UserDetails {
+public class    CustomUserDetails implements UserDetails {
 
     private final User user;
 

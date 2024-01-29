@@ -4,7 +4,7 @@ package careerfestival.career.jwt;
 
 import careerfestival.career.domain.User;
 import careerfestival.career.domain.enums.Role;
-import careerfestival.career.login.dto.CustomUserDetails;
+import careerfestival.career.join.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,12 +25,12 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        //request에서 AccessToken 헤더를 찾음
-        String authorization = request.getHeader("AccessToken");
+        //request에서 Authorization 헤더를 찾음
+        String accessToken = request.getHeader("Authorization");
 
 
         //Authorization 헤더 검사
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
+        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
             System.out.println("JWTFilter token null");
             filterChain.doFilter(request, response);
 
@@ -40,7 +40,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
 
         //Bearer 부분 제거 후 순수 토큰 획득 -> 토큰 시간 검증
-        String token = authorization.split(" ")[1];
+        String token = accessToken.split(" ")[1];
         if (jwtUtil.isExpired(token)) {
             System.out.println("token expired");
             filterChain.doFilter(request, response);
