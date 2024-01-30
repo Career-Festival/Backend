@@ -20,9 +20,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         //DB에서 조회
-        User findByEmail = userRepository.findUserByEmail(username);
+        User findByEmail = userRepository.findByEmail(username);
 
-        if (userRepository.existsByEmail(username)) {
+        if (findByEmail != null) {
             return new CustomUserDetails(findByEmail);
         }
         return null;

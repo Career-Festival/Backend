@@ -48,7 +48,7 @@ public class UserService {
 
     @Transactional
     public void findUserByEmailAndUpdate(String email, UpdateMypageResponseDto updateMypageResponseDto){
-        User findUser = userRepository.findUserByEmail(email);
+        User findUser = userRepository.findByEmail(email);
         findUser.update(updateMypageResponseDto);
         String city = updateMypageResponseDto.getCity();
         String addressLine = updateMypageResponseDto.getAddressLine();
@@ -63,7 +63,7 @@ public class UserService {
 
     @Transactional
     public User findUserByCustomUserDetails(CustomUserDetails customUserDetails){
-        return userRepository.findUserByEmail(customUserDetails.getUsername());
+        return userRepository.findByEmail(customUserDetails.getUsername());
     }
 
     @Transactional

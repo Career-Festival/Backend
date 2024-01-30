@@ -43,8 +43,7 @@ public class SecurityConfig {
 
         RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
 
-        hierarchy.setHierarchy("ROLE_PARTICIPANT > ROLE_USER\n" +
-                "ROLE_ORGANIZER > ROLE_PARTICIPANT");
+        hierarchy.setHierarchy("ROLE_ORGANIZER > ROLE_PARTICIPANT"); //"ROLE_PARTICIPANT > ROLE_USER\n" +
 
         return hierarchy;
     }
@@ -77,7 +76,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/oauth2/**", "/login/**", "/join/**").permitAll()
-                        .requestMatchers("/mypage/**").hasRole("USER")
+                        .requestMatchers("/mypage/**").hasRole("PARTICIPANT")
                         .anyRequest().permitAll()
                 );
 
