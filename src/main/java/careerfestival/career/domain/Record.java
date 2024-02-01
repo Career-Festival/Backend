@@ -3,12 +3,13 @@ package careerfestival.career.domain;
 import careerfestival.career.domain.common.BaseEntity;
 import careerfestival.career.domain.enums.Category;
 import careerfestival.career.domain.enums.KeywordName;
+import careerfestival.career.domain.mapping.NetworkDetail;
+import careerfestival.career.domain.mapping.RecordDetail;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Entity
 @Getter
@@ -25,35 +26,25 @@ public class Record extends BaseEntity {
     private String eventName;
     @Column(nullable = false, name = "event_date")
     private LocalDate eventDate;
-    @Column(nullable = false, length = 50, name = "event_title")
+    // 기록장에서 쓰이는 행사 타이틀 (나만의)
+    @Column(length = 50, name = "event_title")
     private String eventTitle;
-    @Column(nullable = false, length = 300, name = "event_description")
-    private String eventDescription;
-    @Column(length = 300, name = "networking_name")
-    private String networkingName;
-    @Column(length = 300, name = "networking_contact")
-    private String networkingContact;
-    @Column(length = 300, name = "record_etc_detail")
-    private String recordEtcDetail;
-    @Column(length = 300, name = "topic")
-    private String topic;
-    @Column(length = 300, name = "topic_detail")
-    private String topicDetail;
-
-    private Category category;
-    private List<KeywordName> keywordName;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    public void user(Optional<User> user){
-        //checkpoint
-    /* Optional.ofNullable(this.user)
-                .ifPresent(oldUser -> oldUser.removeRecord(this));
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
-        this.user = user;
-        user.addRecord(this);*/
-    }
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private List<KeywordName> keywordName = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "network_detail", joinColumns = @JoinColumn(name = "network_detail_id"))
+    private List<NetworkDetail> networkDetails = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "record_detail", joinColumns = @JoinColumn(name = "record_detail_id"))
+    private List<RecordDetail> recordDetails = new ArrayList<>();
 }

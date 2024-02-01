@@ -15,17 +15,23 @@ import java.util.List;
 public class CommentsController {
     private final CommentService commentService;
 
-    @PostMapping("/event/{userId}/{eventId}/comments")
+    @PostMapping("/event/{eventId}/{userId}/comments")
     public ResponseEntity<Long> addComment(
             @RequestBody CommentRequestDto commentRequestDto,
             @PathVariable("userId") Long userId,
             @PathVariable("eventId") Long eventId){
         // Assuming you have the authenticated user's email
-        String userEmail = "user@example.com"; // Replace this with the actual email
+        // Replace this with the actual email
 
         try {
-            Long commentId = commentService.commentSave(userEmail, userId, eventId, commentRequestDto);
-            return new ResponseEntity<>(commentId, HttpStatus.CREATED);
+            Long commentId = commentService.commentSave(userId, eventId, commentRequestDto);
+            // 리다이렉트를 위한 URL 생성
+            String redirectUrl = "/event/" + eventId + "/" + userId;
+
+            // ResponseEntity로 리다이렉트 응답 생성
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header("Location", redirectUrl)
+                    .body(commentId);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -35,15 +41,14 @@ public class CommentsController {
         }
     }
 
-    @GetMapping("/event/{userId}/{eventId}/comments")
+    @GetMapping("/event/{eventId}/{userId}/comments")
     public ResponseEntity<List<CommentResponseDto>> getAllCommentsByEvent(
             @PathVariable("userId") Long userId,
             @PathVariable("eventId") Long eventId) {
 
-        String userEmail = "user@example.com";
         String comment = "test";
         try {
-            List<CommentResponseDto> comments = commentService.getAllCommentsByEvent(comment, userEmail, userId, eventId);
+            List<CommentResponseDto> comments = commentService.getAllCommentsByEvent(comment, userId, eventId);
             return new ResponseEntity<>(comments, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

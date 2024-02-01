@@ -3,6 +3,7 @@ package careerfestival.career.participate.service;
 import careerfestival.career.domain.Event;
 import careerfestival.career.domain.User;
 import careerfestival.career.domain.mapping.Participate;
+import careerfestival.career.participate.Exception.UserOrEventNotFoundException;
 import careerfestival.career.participate.dto.ParticipateRequestDto;
 import careerfestival.career.participate.dto.ParticipateResponseDto;
 import careerfestival.career.repository.EventRepository;
@@ -22,27 +23,32 @@ public class ParticipateService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
-    public Long participateSave(Long userId, Long eventId, ParticipateRequestDto requestDto) {
-        Optional<Participate> participate = participateRepository.findById(requestDto.getId());
-        Optional<User> userid = userRepository.findById(userId);
-        Optional<Event> eventid = eventRepository.findById(eventId);
+    public Long participateSave(Long userId, Long eventId, ParticipateRequestDto participateRequestDto) {
 
-        Participate participates = Participate.builder()
-                .id(requestDto.getId())
-                .build();
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Event> event = eventRepository.findById(eventId);
 
-        Participate savedParticipate = participateRepository.save(participates);
-        return savedParticipate.getId();
+        Participate participate = participateRequestDto.toEntity(user.orElse(null), event.orElse(null));
+        participateRepository.save(participate);
+        return participate.getId();
     }
 
-    public List<ParticipateResponseDto> getAllParticipateByEvent(Long userId, Long eventId, String nam) {
-        Optional<User> userid = userRepository.findById(userId);
-        Optional<Event> eventid = eventRepository.findById(eventId);
-        List<Participate> participates = participateRepository.findByEvent_EventName(nam);
-        return participates.stream()
-                .map(ParticipateResponseDto::new)
-                .collect(Collectors.toList());
+    public List<ParticipateResponseDto> getAllParticipateByEvent(Long userId, Long eventId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        if (userOptional.isPresent() && eventOptional.isPresent()) {
+            User user = userOptional.get();
+            Event event = eventOptional.get();
 
+            List<Participate> participates = participateRepository.findByUserAndEvent(user, event);
+
+            return participates.stream()
+                    .map(ParticipateResponseDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            // 원하는 예외 처리 또는 에러 응답을 수행할 수 있습니다.
+            throw new UserOrEventNotFoundException("User or Event not found");
+        }
     }
 }
 

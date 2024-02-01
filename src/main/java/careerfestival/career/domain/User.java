@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Email
-    @Column(nullable = false, length = 300, name = "email")
+    @Column(unique = true, nullable = false, length = 300, name = "email")
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -56,11 +56,8 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "INT")
     private int age;
 
-    /*
-
-    ------------관심 지역 들어갈 자리----------------
-
-    */
+    // 관심지역
+    private String addressLine;
 
     // 소속(회사/기관/학교명)
     @Column(length = 20, name = "company")
@@ -74,16 +71,15 @@ public class User extends BaseEntity {
     @Column(length = 20, name = "position")
     private String position;
 
-
+    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private KeywordName keywordName;
-
-
+    private List<KeywordName> keywordName = new ArrayList<>();
 
     /*
     ----------위에는 회원가입에 직접 사용되는 값들----------------
      */
-
+    @Column(name = "user_profile_file_url")
+    private String userProfilefileUrl;
 
     private Timestamp inactiveDate;
 
@@ -99,20 +95,20 @@ public class User extends BaseEntity {
     private List<Event> event = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-
-
     private List<Record> record = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-
-
     private List<Wish> wish = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Participate> participate = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Organizer> organizer = new ArrayList<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Organizer organizer;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    private Region region;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Follow> follow = new ArrayList<>();
@@ -120,10 +116,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
-    public void addRecord(Record record){
+    public void addRecord(Record record) {
         records.add(record);
     }
-
 
     //--------------------------------update--------------------------------
 
@@ -167,9 +162,20 @@ public class User extends BaseEntity {
         this.position = position;
     }
 
-    public void updateKeyword(KeywordName keyword) {
-        if(keyword==null) return;
-        this.keywordName = keyword;
+    public void updateKeywordName(KeywordName[] keywordName) {
+        if(keywordName==null) return;
+        if(this.keywordName != null) {
+            this.keywordName.clear();
+        }
+        else this.keywordName = new ArrayList<>();
+
+        this.keywordName.addAll(List.of(keywordName));
+    }
+
+    public void updateAddressLine(String addressLine) {
+        if(addressLine==null) return;
+
+        this.addressLine = addressLine;
     }
 
     @Transactional
@@ -181,7 +187,7 @@ public class User extends BaseEntity {
         this.updateCompany(updateMypageResponseDto.getCompany());
         this.updateDepartment(updateMypageResponseDto.getDepartment());
         this.updatePosition(updateMypageResponseDto.getPosition());
-        this.updateKeyword(updateMypageResponseDto.getKeywordName());
+        this.updateKeywordName(updateMypageResponseDto.getKeywordName());
     }
 }
 
