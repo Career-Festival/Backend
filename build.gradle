@@ -24,6 +24,9 @@ repositories {
 ext {
 	springVersion = '6.1.2' // springVersion 변수 정의
 }
+jar {
+	enabled = false
+}
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
