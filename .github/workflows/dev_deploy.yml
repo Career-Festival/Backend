@@ -40,13 +40,14 @@ jobs:
         shell: bash # (9).확보한 시간 보여주기
 
       - name: Generate deployment package
-        run:
+        run: |
           mkdir -p deploy
           cp -f build/libs/*.jar deploy/application.jar
           cp -f Procfile deploy/Procfile
           cp -rf .ebextensions-dev deploy/.ebextensions
           cp -rf .platform deploy/.platform
           cd deploy && zip -r deploy.zip .
+
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
