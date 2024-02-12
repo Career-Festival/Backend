@@ -54,15 +54,17 @@ jobs:
           docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
           docker push euegenechoi/careerfestival-frontend:latest
 
-      - name: Docker build frontend and push to Docker hub
-        run: |  
+      - name: Docker build backend and push to Docker hub
+        run: |
+          docker login -u euegenechoi -p ${{ secrets.DOCKER_PASSWORD }}
           pwd
           cd backend
           docker build -t careerfestival-backend .
-          docker tag careerfetrstival-backend euegenechoi/careerfestival-backend:latest
+          docker tag careerfestival-backend euegenechoi/careerfestival-backend:latest
           docker push euegenechoi/careerfestival-backend:latest
 
-      - name: Get current time
+
+- name: Get current time
         uses: 1466587594/get-current-time@v2
         id: current-time
         with:
