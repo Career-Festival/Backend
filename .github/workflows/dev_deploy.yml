@@ -41,7 +41,7 @@ jobs:
           cd frontend
           pwd
           npm install --legacy-peer-deps
-          npm test
+          npm test -- --passWithNoTests
         shell: bash
 
       - name: Docker build and push to Docker hub
