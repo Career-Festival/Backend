@@ -44,7 +44,7 @@ jobs:
           npm test -- --passWithNoTests
         shell: bash
 
-      - name: Docker build and push to Docker hub
+      - name: Docker build frontend and push to Docker hub
         run: |
           docker login -u euegenechoi -p ${{ secrets.DOCKER_PASSWORD }}
           
@@ -53,9 +53,11 @@ jobs:
           docker build -t careerfestival-frontend .
           docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
           docker push euegenechoi/careerfestival-frontend:latest
-          
+
+      - name: Docker build frontend and push to Docker hub
+        run: |  
           pwd
-          cd ./backend
+          cd backend
           docker build -t careerfestival-backend .
           docker tag careerfetrstival-backend euegenechoi/careerfestival-backend:latest
           docker push euegenechoi/careerfestival-backend:latest
