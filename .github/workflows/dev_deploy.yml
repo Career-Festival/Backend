@@ -21,7 +21,9 @@ jobs:
           distribution: 'adopt'
 
       - name: move Backend file
-        run: cd Backend
+        run: |
+          cd Backend
+          ls -l
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
