@@ -38,7 +38,7 @@ jobs:
       - name: Install dependency And npm test
         run: |
           pwd
-          cd ../frontend
+          cd frontend
           pwd
           npm install --legacy-peer-deps
           npm test
