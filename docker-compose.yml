@@ -8,3 +8,4 @@ services:
   careerfestival-frontend:
     image: euegenechoi/careerfestival-frontend:latest
     ports:
+      - "80:3000"
