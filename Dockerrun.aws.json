@@ -4,7 +4,6 @@
     {
       "name": "careerfestival-backend",
       "image": "euegenechoi/careerfestival-backend:latest",
-      "memory": 256,
       "essential": true,
       "portMappings": [
         {
@@ -16,7 +15,6 @@
     {
       "name": "careerfestival-frontend",
       "image": "euegenechoi/careerfestival-frontend:latest",
-      "memory": 128,
       "essential": true,
       "portMappings": [
         {
@@ -25,5 +23,8 @@
         }
       ]
     }
-  ]
+  ],
+  "compose": {
+    "dockerComposeFile": "docker-compose.yml"
+  }
 }

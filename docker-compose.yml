@@ -1,0 +1,10 @@
+version: '3'
+services:
+  careerfestival-backend:
+    image: euegenechoi/careerfestival-backend:latest
+    ports:
+      - "9000:9000"
+
+  careerfestival-frontend:
+    image: euegenechoi/careerfestival-frontend:latest
+    ports:
