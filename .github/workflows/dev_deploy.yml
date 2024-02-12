@@ -54,11 +54,9 @@ jobs:
           docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
           docker push euegenechoi/careerfestival-frontend:latest
           
-          pwd
-          cd Backend
-          
+          pwd          
           docker build -t careerfestival-backend .
-          docker tag careerfestival-backend euegenechoi/careerfestival-backend:latest
+          docker tag careerfetrstival-backend euegenechoi/careerfestival-backend:latest
           docker push euegenechoi/careerfestival-backend:latest
 
       - name: Get current time
