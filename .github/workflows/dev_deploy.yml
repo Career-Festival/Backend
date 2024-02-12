@@ -34,7 +34,15 @@ jobs:
           docker build -t careerfestival-backend .
           docker tag careerfestival-backend euegenechoi/careerfestival-backend:latest
           docker push euegenechoi/careerfestival-backend:latest
+
+          # 디버그 출력 추가
+          echo "현재 디렉터리: $(pwd)"
+          ls -l
+
           cd Frontend
+          echo "Frontend 디렉터리로 변경: $(pwd)"
+          ls -l
+            
           docker build -t careerfestival-frontend .
           docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
           docker push euegenechoi/careerfestival-frontend:latest
