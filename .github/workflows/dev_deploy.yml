@@ -36,6 +36,7 @@ jobs:
           cd Frontend
           npm install --legacy-peer-deps
           npm test
+        shell: bash
 
       - name: Docker build and push to Docker hub
         run: |
