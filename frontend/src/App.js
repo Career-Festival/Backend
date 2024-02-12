@@ -23,6 +23,7 @@ import MyPage from "./pages/MyPage";
 import OrganizationInfoPage from "./pages/OrganizationInfoPage";
 import FooterTwo from "./components/footer/FooterTwo";
 import { AuthProvider } from "./context/AuthContext";
+import HealthCheck from "./HealthCheck";
 
 import "./App.css";
 import Level1 from "./components/Enroll/Level1";
@@ -74,6 +75,7 @@ function App() {
           <Route path="/organizationinfo/:OrganizationName" element ={<><Header/><OrganizationInfoPage/><Footer/></>} />
           {/*마이페이지*/}
           <Route path="organization-mypage" element ={<><Header/><OrganizationMypage/><Footer/></>} />
+          <Route path="/health" element={<HealthCheck />} />
         </Routes>
       </div>
       </AuthProvider>
