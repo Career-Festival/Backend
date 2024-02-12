@@ -20,37 +20,29 @@ jobs:
           java-version: '17' # (5).자바 설치
           distribution: 'adopt'
 
-      - name: move Backend file
+      - name: Grant execute permission for gradlew And Build with Gradle
         run: |
           cd Backend
-
-      - name: Grant execute permission for gradlew
-        run: |
-          ls -l
           chmod +x ./gradlew
-        shell: bash # (6).권한 부여
-
-      - name: Build with Gradle
-        run: ./gradlew clean build -x test
+          ./gradlew clean build -x test
         shell: bash # (7).build 시작
 
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
             node-version: '20'
-      - name: Install dependency
+      - name: Install dependency And npm test
         run: |
           cd ..
           cd Frontend
           npm install --legacy-peer-deps
-
-      - name: Node.js test
-        run: npm test
+          npm test
 
       - name: Docker build and push to Docker hub
         run: |
           docker login -u euegenechoi -p ${{ secrets.DOCKER_PASSWORD }}
           
+          cd Frontend
           docker build -t careerfestival-frontend .
           docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
           docker push euegenechoi/careerfestival-frontend:latest
@@ -61,8 +53,6 @@ jobs:
           docker build -t careerfestival-backend ./Backend
           docker tag careerfestival-backend euegenechoi/careerfestival-backend:latest
           docker push euegenechoi/careerfestival-backend:latest
-            
-          
 
       - name: Get current time
         uses: 1466587594/get-current-time@v2
