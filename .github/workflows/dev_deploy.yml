@@ -55,7 +55,7 @@ jobs:
           docker push euegenechoi/careerfestival-frontend:latest
           
           pwd
-          cd ../Backend
+          cd ./Backend
           docker build -t careerfestival-backend .
           docker tag careerfetrstival-backend euegenechoi/careerfestival-backend:latest
           docker push euegenechoi/careerfestival-backend:latest
