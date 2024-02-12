@@ -38,9 +38,7 @@ jobs:
       - name: Install dependency And npm test
         run: |
           pwd
-          cd ..
-          pwd
-          cd frontend
+          cd ../frontend
           pwd
           npm install --legacy-peer-deps
           npm test
@@ -56,8 +54,8 @@ jobs:
           docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
           docker push euegenechoi/careerfestival-frontend:latest
           
-          cd ..
-          cd Backend
+          pwd
+          cd ../Backend
           
           docker build -t careerfestival-backend ./Backend
           docker tag careerfestival-backend euegenechoi/careerfestival-backend:latest
