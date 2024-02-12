@@ -1,5 +1,5 @@
 FROM node:20-alpine
-RUN npm install
+RUN npm ci
 COPY package*.json ./
 COPY ./src ./src
 COPY ./public ./public
