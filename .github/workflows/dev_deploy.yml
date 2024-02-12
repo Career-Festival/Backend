@@ -84,5 +84,5 @@ jobs:
           environment_name: Careerfestival-dev-env
           version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
           region: ap-northeast-2
-          deployment_package: Dockerrun.aws.json
+          deployment_package: docker-compose.yml
           wait_for_deployment: false
