@@ -34,7 +34,7 @@ jobs:
       - name: Install dependency And npm test
         run: |
           cd ..
-          cd Frontend
+          cd frontend
           npm install --legacy-peer-deps
           npm test
         shell: bash
@@ -44,7 +44,7 @@ jobs:
           docker login -u euegenechoi -p ${{ secrets.DOCKER_PASSWORD }}
           
           pwd
-          cd Frontend
+          cd frontend
           docker build -t careerfestival-frontend .
           docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
           docker push euegenechoi/careerfestival-frontend:latest
