@@ -33,8 +33,11 @@ jobs:
             node-version: '20'
       - name: Install dependency And npm test
         run: |
+          pwd
           cd ..
+          pwd
           cd frontend
+          pwd
           npm install --legacy-peer-deps
           npm test
         shell: bash
