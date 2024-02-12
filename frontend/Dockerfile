@@ -1,6 +1,7 @@
 FROM node:20-alpine
-RUN npm ci
+WORKDIR /app
 COPY package*.json ./
+RUN npm ci
 COPY ./src ./src
 COPY ./public ./public
 RUN npm run build
