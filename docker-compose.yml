@@ -5,12 +5,22 @@ services:
     image: euegenechoi/careerfestival-backend:latest
     expose:
       - 9000
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     # 기타 backend 설정
 
   careerfestival-frontend:
     image: euegenechoi/careerfestival-frontend:latest
     expose:
       - 3000
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     # 기타 frontend 설정
 
   nginx:
