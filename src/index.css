@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  /*font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;*/
+  font-family: 'Noto Sans KR';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 500; /* 글씨를 조금 더 얇게 만듦 (100에서 900까지의 값 사용) */
+  opacity: 1.0; /* 텍스트를 약간 흐리게 만듦 (0.0에서 1.0까지의 값 사용) */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+

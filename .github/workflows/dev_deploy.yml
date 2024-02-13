@@ -1,0 +1,63 @@
+name: Dev CI/CD
+
+on:
+  push:
+    branches:
+      - test-cicd
+  pull_request:
+    types: [closed]
+  workflow_dispatch: # (2).수동 실행도 가능하도록
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # (3).OS환경
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'feat-test-cicd') ||
+      (github.event_name == 'push' && github.event.ref == 'refs/heads/frontend-amplify')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2 # (4).코드 check out
+
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+            node-version: '20'
+      - name: Install dependency And npm test
+        run: |
+          pwd
+          cd frontend
+          pwd
+          npm install --legacy-peer-deps
+          npm test -- --passWithNoTests
+        shell: bash
+
+      - name: Docker build frontend and push to Docker hub
+        run: |
+          docker login -u euegenechoi -p ${{ secrets.DOCKER_PASSWORD }}
+          
+          pwd
+          cd frontend
+          docker build -t careerfestival-frontend .
+          docker tag careerfestival-frontend euegenechoi/careerfestival-frontend:latest
+          docker push euegenechoi/careerfestival-frontend:latest
+
+
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYY-MM-DDTHH-mm-ss
+          utcOffset: "+09:00" # (8).build 시점의 시간확보
+
+      - name: Show Current Time
+        run: echo "CurrentTime=$"
+        shell: bash # (9).확보한 시간 보여주기
+
+      - name: Deploy to Amplify
+        run: |
+          amplify env checkout dev
+          amplify push --yes
+        env:
+          AMPLIFY_APP_ID: ${{ secrets.AMPLIFY_APP_ID }}
+          AMPLIFY_ENV_NAME: dev
