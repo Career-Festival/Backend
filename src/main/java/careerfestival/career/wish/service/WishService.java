@@ -2,6 +2,7 @@ package careerfestival.career.wish.service;
 
 import careerfestival.career.domain.Event;
 import careerfestival.career.domain.User;
+import careerfestival.career.domain.enums.Role;
 import careerfestival.career.domain.mapping.Wish;
 import careerfestival.career.participate.Exception.UserOrEventNotFoundException;
 import careerfestival.career.repository.EventRepository;
@@ -24,6 +25,7 @@ public class WishService {
     private final WishRepository wishRepository;
 
     public boolean CheckWish(Long userId, Long eventId, WishRequestDto wishRequestDto){
+
         Optional<User> userOptional = userRepository.findById(userId);
         Optional<Event> eventOptional = eventRepository.findById(eventId);
 
@@ -32,29 +34,32 @@ public class WishService {
             Event event = eventOptional.get();
 
             Wish check = wishRepository.findByUserIdAndEventId(user.getId(), event.getId()).orElse(null);
-            if (check == null) {
+            if(user.getRole() == Role.ROLE_PARTICIPANT){
+                if (check == null) {
 
-                Wish newWish = wishRequestDto.toEntity(user, event);
-                wishRepository.save(newWish);
-                return true;
-            } else {
-                wishRepository.delete(check);
-                return false;
+                    Wish newWish = wishRequestDto.toEntity(user, event);
+                    wishRepository.save(newWish);
+                    return true;
+                } else {
+                    wishRepository.delete(check);
+                    return false;
+                }
             }
+            return false;
         }else {
             throw new UserOrEventNotFoundException("User or Event not found");
         }
 
     }
 
-    public List<WishResponseDto> getAllWishByEvent(Long userId, Long eventId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    public List<WishResponseDto> getAllWishByEvent(String email, Long eventId) {
+        User userOptional = userRepository.findByEmail(email);
         Optional<Event> eventOptional = eventRepository.findById(eventId);
-        if (userOptional.isPresent() && eventOptional.isPresent()) {
-            User user = userOptional.get();
+        if (userOptional != null && eventOptional.isPresent()) {
+            User user = userOptional;
             Event event = eventOptional.get();
 
-            Optional<Wish> wish = wishRepository.findByUserIdAndEventId(user.getId(), event.getId());
+            List<Wish> wish = wishRepository.findByUser_IdAndEvent_Id(user.getId(), event.getId());
 
             return wish.stream()
                     .map(WishResponseDto::new)

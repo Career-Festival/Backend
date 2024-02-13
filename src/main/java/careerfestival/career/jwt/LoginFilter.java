@@ -68,11 +68,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = userSignInRequestDto.getUsername();
         String password = userSignInRequestDto.getPassword();
 
+
         //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야함
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
+        System.out.println("authToken = " + authToken);
 
         //token에 담은 검증을 위한 AuthenticationManager로 전달
-        return authenticationManager.authenticate(authToken);
+        Authentication authenticate = authenticationManager.authenticate(authToken);
+
+        return authenticate;
     }
 
     //로그인 성공
@@ -90,6 +94,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String authority = auth.getAuthority();
         Role role = Role.fromString(authority);
 
+
+
+
         String token = jwtUtil.createJwt(email, role.toString(), 600000L); //10분
 
         response.addHeader("Authorization", "Bearer " + token);
@@ -101,6 +108,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         response.addHeader("Location", redirectUrl);
 
+        // Role 정보 response에 담아서
+        response.getWriter().write("{\"role\": \"" + role.toString() + "\"}");
 
         System.out.println("------------------------");
         System.out.println("Login Success");

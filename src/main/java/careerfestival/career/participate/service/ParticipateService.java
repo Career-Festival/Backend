@@ -27,7 +27,7 @@ public class ParticipateService {
 
         Optional<User> user = userRepository.findById(userId);
         Optional<Event> event = eventRepository.findById(eventId);
-
+        System.out.println("event = " + event);
         Participate participate = participateRequestDto.toEntity(user.orElse(null), event.orElse(null));
         participateRepository.save(participate);
         return participate.getId();
@@ -48,6 +48,20 @@ public class ParticipateService {
         } else {
             // 원하는 예외 처리 또는 에러 응답을 수행할 수 있습니다.
             throw new UserOrEventNotFoundException("User or Event not found");
+        }
+    }
+
+    public String getLink(Long eventId){
+        Event event = eventRepository.findById(eventId).orElse(null);
+        if (event != null){
+            if(event.getLink() != null){
+                return event.getLink();
+            }
+            return null;
+        }
+        else {
+            // 원하는 예외 처리 또는 에러 응답을 수행할 수 있습니다.
+            throw new UserOrEventNotFoundException("Event not found");
         }
     }
 }

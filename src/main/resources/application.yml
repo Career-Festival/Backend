@@ -19,7 +19,7 @@ spring:
         format_sql: true
         use_sql_comments: true
         hbm2ddl:
-          auto: create-drop
+          auto: update
         default_batch_fetch_size: 1000
 
   jwt:
@@ -31,6 +31,10 @@ spring:
       max-request-size: 10MB
       max-file-size: 10MB
       enabled: true
+
+aes:
+    secret-key: ${AES_SECRET_KEY}
+    init-vector: ${AES_INIT_VECTOR}
 
 cloud:
   aws:
@@ -44,5 +48,18 @@ cloud:
     stack:
       auto: false
 
+mail:
+  smtp:
+    host: smtp.gmail.com
+    port: 587
+    username: ${gimjeonggeon386@gmail.com}
+    password: ${xvhf hqid kbmu aeyx}
+    auth: true
+    starttls:
+      enable: true
+      required: true
+  subject:
+    member:
+      registration: Thank you for joining our cafe!
 server:
   port: 9000
