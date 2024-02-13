@@ -29,6 +29,11 @@ jobs:
           npm test -- --passWithNoTests
         shell: bash
 
+      - name: Install Amplify CLI
+        run: |
+          npm install -g @aws-amplify/cli
+          amplify configure --usage-data-off
+
       - name: Docker build frontend and push to Docker hub
         run: |
           docker login -u euegenechoi -p ${{ secrets.DOCKER_PASSWORD }}
