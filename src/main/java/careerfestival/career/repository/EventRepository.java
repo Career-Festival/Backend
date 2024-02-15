@@ -23,9 +23,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
      */
 
 
-    List<Event> findAllById(Long eventId);
-
-
     @Query(value = "SELECT * FROM event ORDER BY hits DESC LIMIT ?1", nativeQuery = true)
     List<Event> findAllByOrderByHitsDesc(int limit);
     @Query(value = "SELECT * FROM Event ORDER BY RAND() LIMIT ?1", nativeQuery = true)
