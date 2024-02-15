@@ -9,8 +9,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:9000", "http://localhost:3000") // 허용할 출처
-                .allowedMethods("GET", "POST", "DELETE", "PUT") // 허용할 HTTP method
+                .allowedOrigins("http://localhost:9000", "http://localhost:3000", "https://www.career-festival.com:3000", "https://www.career-festival.com:8443") // 허용할 출처
+                .allowedMethods("GET", "POST", "DELETE", "PUT", "PATCH") // 허용할 HTTP method
                 .allowedHeaders("*")
                 .exposedHeaders("*")
                 .allowCredentials(true) // 쿠키 인증 요청 허용
