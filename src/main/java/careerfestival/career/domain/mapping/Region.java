@@ -22,7 +22,7 @@ public class Region {
     @Column(nullable = false, name = "address_line")
     private String addressLine;
 
-    @OneToOne(mappedBy = "region", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Event event;
 
     @ManyToOne(fetch = FetchType.LAZY)
