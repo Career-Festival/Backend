@@ -1,6 +1,8 @@
 package careerfestival.career.eventPage.dto;
 
 import careerfestival.career.domain.Event;
+import careerfestival.career.domain.enums.Category;
+import careerfestival.career.domain.enums.KeywordName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,23 +17,31 @@ import java.time.LocalDateTime;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventPageResponseDto {
-    private Long eventId;
     private String eventName;
-    private String eventMainFileUrl;
-    private String eventInformFileUrl;
     private LocalDateTime recruitmentStart;
     private LocalDateTime recruitmentEnd;
     private String eventCost;
+    private LocalDateTime eventStart;
+    private LocalDateTime eventEnd;
+    private String specAddress;
+    private KeywordName keywordName;
+    private Category category;
+    private String eventMainImageUrl;
+    private String eventInformImageUrl;
 
     public static EventPageResponseDto fromEntity(Event event){
         return EventPageResponseDto.builder()
-                .eventId(event.getId())
                 .eventName(event.getEventName())
-                .eventMainFileUrl(event.getEventMainFileUrl())
-                .eventInformFileUrl(event.getEventInformFileUrl())
                 .recruitmentStart(event.getRecruitmentStart())
                 .recruitmentEnd(event.getRecruitmentEnd())
                 .eventCost(event.getEventCost())
+                .specAddress(event.getSpecAddress())
+                .keywordName(event.getKeywordName())
+                .category(event.getCategory())
+                .eventStart(event.getEventStart())
+                .eventEnd(event.getEventEnd())
+                .eventMainImageUrl(event.getEventMainFileUrl())
+                .eventInformImageUrl(event.getEventInformFileUrl())
                 .build();
     }
 }

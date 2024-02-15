@@ -3,7 +3,9 @@ package careerfestival.career.eventPage.controller;
 import careerfestival.career.comments.Service.CommentService;
 import careerfestival.career.comments.dto.CommentResponseDto;
 import careerfestival.career.config.SecurityConfig;
+import careerfestival.career.domain.Event;
 import careerfestival.career.domain.User;
+import careerfestival.career.eventPage.dto.EventPageOrganizerResponseDto;
 import careerfestival.career.eventPage.dto.EventPageResponseDto;
 import careerfestival.career.eventPage.service.EventPageService;
 import careerfestival.career.inquiry.dto.InquiryResponseDto;
@@ -13,6 +15,7 @@ import careerfestival.career.login.dto.CustomUserDetails;
 import careerfestival.career.login.service.UserService;
 import careerfestival.career.participate.dto.StatisticsDto;
 import careerfestival.career.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 
@@ -20,7 +23,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +37,10 @@ public class EventPageController {
     private final EventPageService eventPageService;
     private final CommentService commentService;
     private final InquiryService inquiryService;
-    private final UserService userService;
-    private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
 
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<Map<String, Object>> getAllCommentsByEvent(
+    public ResponseEntity<Map<String, Object>> getAllByEvent(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable("eventId") Long eventId,
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -57,7 +60,7 @@ public class EventPageController {
         // 댓글을 조회합니다.
         try {
             List<EventPageResponseDto> eventInformation = eventPageService.getEvents(eventId);
-
+            EventPageOrganizerResponseDto organizerInformation = eventPageService.getOrganizer(eventId);
             StatisticsDto statistics = StatisticsDto.fromEntity(eventPageService.findEvent(eventId));
 
             // 수정된 부분: CommentService에서 수정한 메서드 사용
@@ -66,6 +69,7 @@ public class EventPageController {
             // 댓글 정보를 응답으로 반환합니다.
             Map<String, Object> eventPage = new HashMap<>();
             eventPage.put("eventInformation", eventInformation);
+            eventPage.put("organizerInformation", organizerInformation);
             eventPage.put("statistics", statistics);
             eventPage.put("comments", comments.getContent());  // Page의 getContent() 메서드를 사용하여 데이터 추출
             eventPage.put("currentPage", comments.getNumber());  // 현재 페이지 번호
