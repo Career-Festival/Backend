@@ -56,7 +56,7 @@ public class UserService {
         findUser.update(updateMypageResponseDto);
 
         Region region = regionRepository.findRegionByCityAndAddressLine(updateMypageResponseDto.getCity(), updateMypageResponseDto.getAddressLine());
-
+        findUser.updateRegion(region);
         Gender gender = findUser.getGender();
 
         if(Gender.남성.equals(gender)){
@@ -102,5 +102,6 @@ public class UserService {
             return myPageUserInfoResponseDto;
         }
     }
+
 
 }
