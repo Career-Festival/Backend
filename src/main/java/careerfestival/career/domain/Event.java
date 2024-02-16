@@ -84,6 +84,10 @@ public class Event extends BaseEntity {
     private Region region;
 
     @ManyToOne(fetch = FetchType.LAZY)
+
+    private Region region;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
