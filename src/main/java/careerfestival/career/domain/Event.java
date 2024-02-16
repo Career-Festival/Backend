@@ -79,14 +79,19 @@ public class Event extends BaseEntity {
     @Column(length = 300, name = "event_etc_detail")
     private String eventEtcDetail;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    private Region region;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+
+    private Region region;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Organizer organizer;
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    private List<Region> region = new ArrayList<>();
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comment = new ArrayList<>();
