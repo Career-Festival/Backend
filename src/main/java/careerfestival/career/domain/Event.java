@@ -80,7 +80,6 @@ public class Event extends BaseEntity {
     private String eventEtcDetail;
 
     @ManyToOne(fetch = FetchType.LAZY)
-
     private Region region;
 
     @ManyToOne(fetch = FetchType.LAZY)
