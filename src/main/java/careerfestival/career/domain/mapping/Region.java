@@ -28,6 +28,6 @@ public class Region {
     @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
     private List<Event> event = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
+    private List<User> user = new ArrayList<>();
 }

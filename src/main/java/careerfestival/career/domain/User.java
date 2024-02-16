@@ -92,8 +92,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Organizer> organizer = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Region> region = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Region region;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
@@ -162,8 +162,8 @@ public class User extends BaseEntity {
         this.userProfilefileUrl = userProfilefileUrl;
     }
 
-    public void updateRegion(List<Region> region){
-        if(region == null || region.isEmpty()) return;
+    public void updateRegion(Region region){
+        if(region == null) return;
         this.region = region;
     }
 
