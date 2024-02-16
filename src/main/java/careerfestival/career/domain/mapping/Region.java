@@ -5,6 +5,9 @@ import careerfestival.career.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,8 +25,8 @@ public class Region {
     @Column(nullable = false, name = "address_line")
     private String addressLine;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Event event;
+    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
+    private List<Event> event = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
