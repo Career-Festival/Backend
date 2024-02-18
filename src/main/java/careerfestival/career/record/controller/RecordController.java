@@ -1,13 +1,23 @@
 package careerfestival.career.record.controller;
 
-import careerfestival.career.record.dto.RecordEtcDto;
-import careerfestival.career.record.dto.RecordLectureSeminarDto;
+import careerfestival.career.login.dto.CustomUserDetails;
+import careerfestival.career.myPage.dto.UpdateMypageResponseDto;
+import careerfestival.career.record.dto.RecordRequestDto;
 import careerfestival.career.record.service.RecordService;
+import careerfestival.career.record.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import careerfestival.career.record.dto.RecordMainResponseDto;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -15,47 +25,101 @@ import java.util.List;
 @RequestMapping("/record")
 @RestController
 public class RecordController {
-//    private final RecordCommandService recordCommandService;
     private final RecordService recordService;
-//    private final RecordCommandService recordCommandService;
-    //
-    @PostMapping("/lecture-seminar/{userId}")
-    public ResponseEntity<Void> recordLectureSeminar(@PathVariable("userId") Long userId, @RequestBody RecordLectureSeminarDto recordLectureSeminarDto) {
+
+    // 기록장 게시 (사진 업로드 포함)
+    @PostMapping(value = "/lecture-seminar")
+    public ResponseEntity<Void> recordLectureSeminar(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                     HttpServletRequest request,
+                                                     @RequestPart("lectureSeminarImage") MultipartFile lectureSeminarImage,
+                                                     @RequestPart("recordRequestDto") RecordRequestDto recordRequestDto) {
         try {
-            recordService.recordLectureSeminar(userId, recordLectureSeminarDto);
+            recordService.recordLectureSeminar(customUserDetails.getUsername(), lectureSeminarImage, recordRequestDto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    // conference 기록 추가
+    @PostMapping("/conference")
+    public ResponseEntity<Void> recordConference(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                 HttpServletRequest request,
+                                                 @RequestPart("conferenceImage") List<MultipartFile> conferenceImage,
+                                                 @RequestPart("recordRequestDto") RecordRequestDto recordRequestDto){
+        try {
+            recordService.recordConference(customUserDetails.getUsername(), conferenceImage, recordRequestDto);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PostMapping("/etc/{userId}")
-    public ResponseEntity<Void> recordEtc(@PathVariable("userId") Long userId, @RequestBody RecordEtcDto recordEtcDto) {
+    @PostMapping("/exhibition")
+    public ResponseEntity<Void> recordExhibition(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                 HttpServletRequest request,
+                                                 @RequestPart("exhibitionImage") List<MultipartFile> exhibitionImage,
+                                                 @RequestPart("recordRequestDto") RecordRequestDto recordRequestDto){
         try {
-            recordService.recordEtc(userId, recordEtcDto);
+            recordService.recordExhibition(customUserDetails.getUsername(), exhibitionImage, recordRequestDto);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-    //기록장
-//    @PostMapping("/{memberId}")
-//    public ApiResponse<RecordResponseDto.AddRecordResponseDto>
-//    addRecordConference(@RequestBody @Valid RecordRequestDto.AddRecordConferenceRequestDto request
-//              ,@PathVariable Long memberId){
-//        Record record = recordCommandService.addRecord(request, memberId);
-//        return ApiResponse.onSuccess(RecordConverter.toAddRecordResponseDto(record));
-//    }
+
+
+    @PostMapping("/etc")
+    public ResponseEntity<Void> recordEtc(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                          HttpServletRequest request,
+                                          @RequestPart("etcImage") MultipartFile etcImage,
+                                          @RequestPart("recordRequestDto") RecordRequestDto recordRequestDto) {
+        try {
+            recordService.recordEtc(customUserDetails.getUsername(), etcImage, recordRequestDto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+        //기록 수정
+    @PatchMapping("/update")
+    public ResponseEntity<Void> updateRecord(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                             @RequestBody UpdateRecordResponseDto updateRecordResponseDto ,Long recordId){
+        recordService.findRecordByEmailAndUpdate(recordId, updateRecordResponseDto);
+        String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/record")
+                .toUriString();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", redirectUrl);
+
+        return new ResponseEntity<>(headers, HttpStatus.OK);
+    }
+
 
 
 
     // 메인페이지
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<RecordMainResponseDto>> getRecordsByUserId(@PathVariable("userId") Long userId) {
+    @GetMapping("")             // ./record
+    public ResponseEntity<Page<RecordResponseDto>> getRecordsByUserId(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PageableDefault(size = 4, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
-            List<RecordMainResponseDto> recordMainResponses = recordService.getRecordsByUserId(userId);
-            return ResponseEntity.ok(recordMainResponses);
+            Page<RecordResponseDto> recordResponseDtos = recordService.recordList(customUserDetails.getUsername(), pageable);
+            return ResponseEntity.ok(recordResponseDtos);
         } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // 기록장 메인화면에서 하나의 기록장에 대해서 클릭했을 때 처리 - 프론트 페이지 나오고 나서 RequestParam 수정 여부 결정
+    @GetMapping("/category")    // ./record/category
+    public ResponseEntity<RecordResponseDto> getRecordByRecordId(
+            @RequestParam(value = "recordId") Long recordId){
+        try{
+            RecordResponseDto recordResponseDto = recordService.getRecord(recordId);
+            return ResponseEntity.ok(recordResponseDto);
+        }catch (IllegalArgumentException e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

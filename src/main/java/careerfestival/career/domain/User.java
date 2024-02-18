@@ -1,16 +1,9 @@
 package careerfestival.career.domain;
 
 import careerfestival.career.domain.common.BaseEntity;
-import careerfestival.career.domain.enums.Gender;
-import careerfestival.career.domain.enums.KeywordName;
-import careerfestival.career.domain.enums.Role;
-import careerfestival.career.domain.enums.UserStatus;
+import careerfestival.career.domain.enums.*;
 import careerfestival.career.domain.mapping.*;
-import careerfestival.career.domain.mapping.Comment;
-import careerfestival.career.domain.mapping.Follow;
-import careerfestival.career.domain.mapping.Participate;
 import careerfestival.career.myPage.dto.UpdateMypageResponseDto;
-import careerfestival.career.domain.mapping.Wish;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -39,7 +32,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Email
-    @Column(nullable = false, length = 300, name = "email")
+    @Column(unique = true, nullable = false, length = 300, name = "email")
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -56,56 +49,41 @@ public class User extends BaseEntity {
     @Column(columnDefinition = "INT")
     private int age;
 
-    /*
-
-    ------------관심 지역 들어갈 자리----------------
-
-    */
-
-    // 소속(회사/기관/학교명)
-    @Column(length = 20, name = "company")
-    private String company;
+    // 소속
+    @Enumerated(EnumType.STRING)
+    private CompanyType company;
 
     // 부서 및 학과
     @Column(length = 20, name = "department")
     private String department;
 
-    // 직급
-    @Column(length = 20, name = "position")
-    private String position;
-
-
+    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private KeywordName keywordName;
+    private List<KeywordName> keywordName = new ArrayList<>();
 
-
-
-    /*
-    ----------위에는 회원가입에 직접 사용되는 값들----------------
-     */
-
+    @Column(name = "user_profile_file_url")
+    private String userProfilefileUrl;
 
     private Timestamp inactiveDate;
 
     // status와 inactivedate는 회원 탈퇴, 게시글 삭제 시 필요 기능
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(15) DEFAULT 'ACTIVE'")
+    @Column(name = "user_status")
     private UserStatus userStatus;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comment = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Inquiry> inquiry = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Event> event = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-
-
     private List<Record> record = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-
-
     private List<Wish> wish = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -114,16 +92,22 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Organizer> organizer = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Follow> follow = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Region region;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Record> records = new ArrayList<>();
 
-    public void addRecord(Record record){
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CommentLike> commentLike = new ArrayList<>();
+
+  
+    public void addRecord(Record record) {
         records.add(record);
     }
-
+    public void setUserStatus() {
+        this.userStatus = UserStatus.ACTIVE;
+    }
 
     //--------------------------------update--------------------------------
 
@@ -153,7 +137,7 @@ public class User extends BaseEntity {
     }
 
 
-    public void updateCompany(String company) {
+    public void updateCompany(CompanyType company) {
         if(company==null) return;
         this.company = company;
     }
@@ -162,14 +146,25 @@ public class User extends BaseEntity {
         if(department==null) return;
         this.department = department;
     }
-    public void updatePosition(String position) {
-        if(position==null) return;
-        this.position = position;
+
+    public void updateKeywordName(KeywordName[] keywordName) {
+        if(keywordName==null) return;
+        if(this.keywordName != null) {
+            this.keywordName.clear();
+        }
+        else this.keywordName = new ArrayList<>();
+
+        this.keywordName.addAll(List.of(keywordName));
     }
 
-    public void updateKeyword(KeywordName keyword) {
-        if(keyword==null) return;
-        this.keywordName = keyword;
+    public void updateUserProfileFileUrl(String userProfilefileUrl){
+        if(userProfilefileUrl==null) return;
+        this.userProfilefileUrl = userProfilefileUrl;
+    }
+
+    public void updateRegion(Region region){
+        if(region == null) return;
+        this.region = region;
     }
 
     @Transactional
@@ -180,8 +175,8 @@ public class User extends BaseEntity {
         this.updatePhoneNumber(updateMypageResponseDto.getPhoneNumber());
         this.updateCompany(updateMypageResponseDto.getCompany());
         this.updateDepartment(updateMypageResponseDto.getDepartment());
-        this.updatePosition(updateMypageResponseDto.getPosition());
-        this.updateKeyword(updateMypageResponseDto.getKeywordName());
+        this.updateKeywordName(updateMypageResponseDto.getKeywordName());
+        this.updateUserProfileFileUrl(updateMypageResponseDto.getUserProfileFileUrl());
     }
 }
 

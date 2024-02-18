@@ -1,22 +1,32 @@
 package careerfestival.career.comments.dto;
 
 import careerfestival.career.domain.mapping.Comment;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import careerfestival.career.repository.CommentLikeRepository;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class CommentResponseDto {
-    private Long id;
+    private Long userId;
+    private Long eventId;
     private String commentContent;
-    private String parentContent;
-    public CommentResponseDto(Comment comment) {
-        this.id = comment.getId();
+    private Long parent;
+    private String Name;
+    private Integer totalLikeCount;
+    private LocalDateTime createdAt;
+
+
+    public CommentResponseDto(Comment comment, CommentLikeRepository commentLikeRepository) {
+        this.userId = (comment.getUser() != null) ? comment.getUser().getId() : null;
+        this.eventId = (comment.getEvent() != null) ? comment.getEvent().getId() : null;
         this.commentContent = comment.getCommentContent();
-        this.parentContent = comment.getParentContent();
+        this.parent = (comment.getParent() != null) ? comment.getParent().getId() : null;
+        this.Name = comment.getName();
+        this.totalLikeCount = commentLikeRepository.countByCommentId(comment.getId());
+        this.createdAt = comment.getCreatedAt();
     }
 }

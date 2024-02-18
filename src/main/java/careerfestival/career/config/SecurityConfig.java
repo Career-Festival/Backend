@@ -16,6 +16,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +28,8 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
     private final JWTUtil jwtUtil;
+
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws  Exception {
@@ -67,8 +71,9 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/login", "/join", "/join/detail").permitAll()
-                        .requestMatchers("/mypage", "/mypage/update").hasRole("PARTICIPANT")
+                        .requestMatchers("/", "/login", "/signup", "/signup/detail", "/event/**", "/health").permitAll()
+                        .requestMatchers("/mypage/**", "/event/*/participate").hasRole("PARTICIPANT")
+                        .requestMatchers("event/organizer, event/register").hasRole("ORGANIZER")
                         .anyRequest().permitAll()
                 );
 

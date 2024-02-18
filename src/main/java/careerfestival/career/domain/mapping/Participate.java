@@ -2,6 +2,7 @@ package careerfestival.career.domain.mapping;
 
 import careerfestival.career.domain.Event;
 import careerfestival.career.domain.User;
+import careerfestival.career.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class Participate {
+public class Participate extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,4 +25,8 @@ public class Participate {
     @JoinColumn(name = "event_id")
     private Event event;
 
+    public Participate(User user, Event event) {
+        this.user = user;
+        this.event = event;
+    }
 }
