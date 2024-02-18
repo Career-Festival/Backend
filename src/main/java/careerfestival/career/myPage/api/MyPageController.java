@@ -46,7 +46,6 @@ public class MyPageController {
         try{
             //사용자 정보
             User findUser = userService.findUserByCustomUserDetails(customUserDetails);
-            Organizer findOrganizer = userService.findOrganizerCustomUserDetails(customUserDetails);
             MyPageUserInfoResponseDto myPageUserInfoResponse = userService.fillMyPage(findUser);
 
             Map<String, Object> myPageResponeDtoObjectMap = new HashMap<>();
@@ -69,6 +68,8 @@ public class MyPageController {
             }
             //주최자인 경우
             else {
+                Organizer findOrganizer = userService.findOrganizerCustomUserDetails(customUserDetails);
+
                 //구독자수, 등록한 행사 수
                 int countedFollowers = subscribeService.countFollower(findOrganizer);
                 int countedEvents = organizerService.countRegisterdEvent(findUser);

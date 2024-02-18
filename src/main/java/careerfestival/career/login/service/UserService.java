@@ -80,27 +80,18 @@ public class UserService {
 
     @Transactional
     public MyPageUserInfoResponseDto fillMyPage(User user) {
-        if(user.getRegion() != null){
-            MyPageUserInfoResponseDto myPageUserInfoResponseDto = MyPageUserInfoResponseDto.builder()
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .age(user.getAge())
-                    .gender(user.getGender())
-                    .phoneNumber(user.getPhoneNumber())
-                    .company(user.getCompany())
-                    .department(user.getDepartment())
-                    .keywordNameList(user.getKeywordName())
-                    .userProfilefileUrl(user.getUserProfilefileUrl())
-                    .build();
-            return myPageUserInfoResponseDto;
-        } else {
-            MyPageUserInfoResponseDto myPageUserInfoResponseDto = MyPageUserInfoResponseDto.builder()
-                    .name(user.getName())
-                    .email(user.getEmail())
-                    .userProfilefileUrl(user.getUserProfilefileUrl())
-                    .build();
-            return myPageUserInfoResponseDto;
-        }
+        MyPageUserInfoResponseDto myPageUserInfoResponseDto = MyPageUserInfoResponseDto.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .age(user.getAge())
+                .gender(user.getGender())
+                .phoneNumber(user.getPhoneNumber())
+                .company(user.getCompany())
+                .department(user.getDepartment())
+                .keywordNameList(user.getKeywordName())
+                .userProfilefileUrl(user.getUserProfilefileUrl())
+                .build();
+        return myPageUserInfoResponseDto;
     }
 
 
