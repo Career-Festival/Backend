@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class RegisterMainResponseDto {
+
+    private Long eventId;
+
     private String eventMainFileUrl;
     private String eventName;
     private LocalDateTime recruitmentStart;
@@ -22,6 +25,7 @@ public class RegisterMainResponseDto {
 
     public static RegisterMainResponseDto fromEntity(Event event) {
         return RegisterMainResponseDto.builder()
+                .eventId(event.getId())
                 .eventMainFileUrl(event.getEventMainFileUrl())
                 .eventName(event.getEventName())
                 .recruitmentStart(event.getRecruitmentStart())
