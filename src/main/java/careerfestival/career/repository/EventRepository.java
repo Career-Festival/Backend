@@ -4,7 +4,6 @@ import careerfestival.career.domain.Event;
 import careerfestival.career.domain.User;
 import careerfestival.career.domain.enums.Category;
 import careerfestival.career.domain.enums.KeywordName;
-import careerfestival.career.domain.mapping.Participate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,8 +31,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                              List<KeywordName> keywordName,
                                              Long regionId,
                                              Pageable pageable);
-
-    @Query("SELECT e FROM Event e WHERE e.region.id = :regionId ORDER BY e.hits DESC")
+    @Query(value = "SELECT * FROM event WHERE region_id = ?1 ORDER BY hits DESC", nativeQuery = true)
     List<Event> findRegionEvents(Long regionId);
 
     Page<Event> findPageByOrganizerId(Long organizerId, Pageable pageable);
