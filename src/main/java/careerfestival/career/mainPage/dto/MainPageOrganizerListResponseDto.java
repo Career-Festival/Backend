@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class MainPageOrganizerListResponseDto {
+
+    private Long organizerId;
+
     private String organizerName;
     private String organizerProfileFileUrl;
     private int countEvent;
@@ -18,6 +21,7 @@ public class MainPageOrganizerListResponseDto {
     public static MainPageOrganizerListResponseDto fromOrganizerEntity(Organizer organizer){
         return MainPageOrganizerListResponseDto
                 .builder()
+                .organizerId(organizer.getId())
                 .organizerName(organizer.getOrganizerName())
                 .organizerProfileFileUrl(organizer.getOrganizerProfileFileUrl())
                 .countEvent(organizer.getCountEvent())

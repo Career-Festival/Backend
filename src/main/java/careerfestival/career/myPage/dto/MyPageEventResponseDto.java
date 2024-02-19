@@ -19,6 +19,9 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MyPageEventResponseDto {
+
+    private Long eventId;
+
     private String eventMainFileUrl;
     private String eventName;
     private LocalDateTime recruitmentStart;
@@ -28,6 +31,7 @@ public class MyPageEventResponseDto {
 
     public static MyPageEventResponseDto fromWish(Wish wish) {
         return MyPageEventResponseDto.builder()
+                .eventId(wish.getEvent().getId())
                 .eventMainFileUrl(wish.getEvent().getEventMainFileUrl())
                 .eventName(wish.getEvent().getEventName())
                 .recruitmentStart(wish.getEvent().getRecruitmentStart())

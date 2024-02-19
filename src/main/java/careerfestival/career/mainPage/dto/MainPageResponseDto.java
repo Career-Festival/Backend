@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MainPageResponseDto {
+
+    private Long eventId;
+
     private String eventMainFileUrl;
     private String eventName;
     private LocalDateTime recruitmentStart;
@@ -23,6 +26,7 @@ public class MainPageResponseDto {
 
     public static MainPageResponseDto fromEntity(Event event) {
         return MainPageResponseDto.builder()
+                .eventId(event.getId())
                 .eventMainFileUrl(event.getEventMainFileUrl())
                 .eventName(event.getEventName())
                 .recruitmentStart(event.getRecruitmentStart())
