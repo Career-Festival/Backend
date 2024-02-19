@@ -86,9 +86,9 @@ public class UserService {
                 .age(user.getAge())
                 .gender(user.getGender())
                 .phoneNumber(user.getPhoneNumber())
+                .keywordNameList(user.getKeywordName())
                 .company(user.getCompany())
                 .department(user.getDepartment())
-                .keywordNameList(user.getKeywordName())
                 .userProfilefileUrl(user.getUserProfilefileUrl())
                 .build();
         return myPageUserInfoResponseDto;
