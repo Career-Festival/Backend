@@ -31,7 +31,7 @@ public class MainPageService {
 
     public List<MainPageResponseDto> getEventsHitsDesc() {
         // 조회수에 의한 내림차순 정렬한 events
-        List<Event> events = eventRepository.findAllByOrderByHitsDesc(6);
+        List<Event> events = eventRepository.findAllByOrderByHitsDesc(9);
         
         return events.stream()
                 .map(MainPageResponseDto::fromEntity)

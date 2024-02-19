@@ -1,14 +1,13 @@
 package careerfestival.career.login.api;
 
 import careerfestival.career.domain.User;
-import careerfestival.career.email.service.EmailService;
 import careerfestival.career.domain.enums.Role;
+import careerfestival.career.email.service.EmailService;
 import careerfestival.career.jwt.JWTUtil;
 import careerfestival.career.login.dto.CustomUserDetails;
 import careerfestival.career.login.dto.UserSignUpRequestDto;
 import careerfestival.career.login.service.UserService;
 import careerfestival.career.myPage.dto.UpdateMypageResponseDto;
-import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,8 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping
@@ -45,7 +42,7 @@ public class UserController {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + token);
             headers.add("Location", redirectUrl);
-
+            System.out.println("redirectUrl = " + redirectUrl);
             return new ResponseEntity<>(headers, HttpStatus.OK); //200
         } else {
             String redirectUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -54,7 +51,7 @@ public class UserController {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + token);
             headers.add("Location", redirectUrl);
-
+            System.out.println("redirectUrl = " + redirectUrl);
             return new ResponseEntity<>(headers, HttpStatus.OK); //200
         }
     }
