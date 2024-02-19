@@ -49,13 +49,18 @@ public class MainPageController {
                     List<MainPageResponseDto> mainPageResponseDtoViews = mainPageService.getEventsHitsDesc();
                     // 4. 지역 선택에 의한 행사 반환
                     List<MainPageResponseDto> mainPageResponseDtoRegions = mainPageService.getEventsRegion(regionId);
+                    System.out.println("regionId = " + regionId);
 
                     Map<String, Object> mainPageResponseDtoObjectMap = new HashMap<>();
 
                     mainPageResponseDtoObjectMap.put("userName", userName);
+                    System.out.println("userName = " + userName);
                     mainPageResponseDtoObjectMap.put("eventRegions", mainPageResponseDtoRegions);
+                    System.out.println("mainPageResponseDtoRegions = " + mainPageResponseDtoRegions);
                     mainPageResponseDtoObjectMap.put("eventViews", mainPageResponseDtoViews);
+                    System.out.println("mainPageResponseDtoViews = " + mainPageResponseDtoViews);
                     mainPageResponseDtoObjectMap.put("eventNames", mainPageResponseDtoNames);
+                    System.out.println("mainPageResponseDtoNames = " + mainPageResponseDtoNames);
 
                     return ResponseEntity.ok().body(mainPageResponseDtoObjectMap);
                 } catch (IllegalArgumentException e) {
@@ -132,70 +137,42 @@ public class MainPageController {
     @GetMapping("/festival-list")
     public ResponseEntity<Map<String, Object>> getEventsFilter(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestParam(value = "category") List<Category> category,
-            @RequestParam(value = "keywordName") List<KeywordName> keywordName,
-            @RequestParam(value = "city") String city,          // 지역은 1개에 대해서만 필터링 진행
-            @RequestParam(value = "addressLine") String addressLine,          // 지역은 1개에 대해서만 필터링 진행
+            @RequestParam(value = "category", required = false) List<Category> category,
+            @RequestParam(value = "keywordName", required = false) List<KeywordName> keywordName,
+            @RequestParam(value = "city", required = false) String city,          // 지역은 1개에 대해서만 필터링 진행
+            @RequestParam(value = "addressLine", required = false) String addressLine,          // 지역은 1개에 대해서만 필터링 진행
             @PageableDefault(size = 9, sort = "hits", direction = Sort.Direction.DESC) Pageable pageable) {
 
         if (customUserDetails != null) {        // 로그인 된 사용자일 경우
             Long regionId = mainPageService.getRegionId(customUserDetails.getUsername());
-            if (regionId != null) {
+            if (regionId != null) {                                                             // 기본적으로 (부가정보)까지 입력을 받은 사용자의 경우 -> 지역에 의한 필터링 정보를 보여줘야함
                 try {
                     // 1. 사용자 이름
                     String userName = mainPageService.getUserName(customUserDetails.getUsername());
-                    if(city != null){
-                        regionId = mainPageService.getRegionIdFilter(city, addressLine);
-                        // 2. 필터링이 적용될 9개의 행사 리스트 조회
-                        Page<MainPageFestivalListResponseDto> mainPageFestivalListResponseDtos
-                                = mainPageService.getEventsFiltered(category, keywordName, regionId, pageable);
-                        // 3. 조회수에 의한 이벤트명
-                        List<MainPageResponseDto> mainPageResponseDtoNames = mainPageService.getEventNames();
-                        // 4. (219명의 주최자) 정보 입력 공간
-                        int countOrganizer = mainPageService.getOrganizerCount();
-                        // 5. 주최자 정보 페이지 형태 반환
-                        Pageable organizerPageable = PageRequest.of(0, 10, Sort.by("countEvent").descending());
-                        Page<MainPageOrganizerListResponseDto> mainPageOrganizerListDtos = mainPageService.getOrganizers(organizerPageable);
-                        Map<String, Object> mainPageFestivalListResponseDtoObjectMap = new HashMap<>();
+                    // 2. 필터링이 적용될 9개의 행사 리스트 조회
+                    Page<MainPageFestivalListResponseDto> mainPageFestivalListResponseDtos
+                            = mainPageService.getEventsFiltered(category, keywordName, regionId, pageable);
+                    // 3. 조회수에 의한 이벤트명
+                    List<MainPageResponseDto> mainPageResponseDtoNames = mainPageService.getEventNames();
+                    // 4. (219명의 주최자) 정보 입력 공간
+                    int countOrganizer = mainPageService.getOrganizerCount();
+                    // 5. 주최자 정보 페이지 형태 반환
+                    Pageable organizerPageable = PageRequest.of(0, 10, Sort.by("countEvent").descending());
+                    Page<MainPageOrganizerListResponseDto> mainPageOrganizerListDtos = mainPageService.getOrganizers(organizerPageable);
+                    Map<String, Object> mainPageFestivalListResponseDtoObjectMap = new HashMap<>();
 
-                        // userName은 로그인한 사용자의 사용자명
-                        mainPageFestivalListResponseDtoObjectMap.put("userName", userName);
-                        // eventFilter는 메인페이지의 필터링이 적용된 페이지 행사 리스트들
-                        mainPageFestivalListResponseDtoObjectMap.put("eventFilter", mainPageFestivalListResponseDtos);
-                        // eventNames는 상단바에 위치한 조회수에 의한 행사명 리스트
-                        mainPageFestivalListResponseDtoObjectMap.put("eventNames", mainPageResponseDtoNames);
-                        // countOrganizer는 등록된 주최자 전체 인원 수 반환
-                        mainPageFestivalListResponseDtoObjectMap.put("countOrganizer", countOrganizer);
-                        // organizers는 보여질 주최자 인원 수
-                        mainPageFestivalListResponseDtoObjectMap.put("organizers", mainPageOrganizerListDtos);
+                    // userName은 로그인한 사용자의 사용자명
+                    mainPageFestivalListResponseDtoObjectMap.put("userName", userName);
+                    // eventFilter는 메인페이지의 필터링이 적용된 페이지 행사 리스트들
+                    mainPageFestivalListResponseDtoObjectMap.put("eventFilter", mainPageFestivalListResponseDtos);
+                    // eventNames는 상단바에 위치한 조회수에 의한 행사명 리스트
+                    mainPageFestivalListResponseDtoObjectMap.put("eventNames", mainPageResponseDtoNames);
+                    // countOrganizer는 등록된 주최자 전체 인원 수 반환
+                    mainPageFestivalListResponseDtoObjectMap.put("countOrganizer", countOrganizer);
+                    // organizers는 보여질 주최자 인원 수
+                    mainPageFestivalListResponseDtoObjectMap.put("organizers", mainPageOrganizerListDtos);
 
-                        return ResponseEntity.ok().body(mainPageFestivalListResponseDtoObjectMap);
-                    } else{
-                        // 2. 필터링이 적용될 9개의 행사 리스트 조회
-                        Page<MainPageFestivalListResponseDto> mainPageFestivalListResponseDtos
-                                = mainPageService.getEventsFiltered(category, keywordName, regionId, pageable);
-                        // 3. 조회수에 의한 이벤트명
-                        List<MainPageResponseDto> mainPageResponseDtoNames = mainPageService.getEventNames();
-                        // 4. (219명의 주최자) 정보 입력 공간
-                        int countOrganizer = mainPageService.getOrganizerCount();
-                        // 5. 주최자 정보 페이지 형태 반환
-                        Pageable organizerPageable = PageRequest.of(0, 10, Sort.by("countEvent").descending());
-                        Page<MainPageOrganizerListResponseDto> mainPageOrganizerListDtos = mainPageService.getOrganizers(organizerPageable);
-                        Map<String, Object> mainPageFestivalListResponseDtoObjectMap = new HashMap<>();
-
-                        // userName은 로그인한 사용자의 사용자명
-                        mainPageFestivalListResponseDtoObjectMap.put("userName", userName);
-                        // eventFilter는 메인페이지의 필터링이 적용된 페이지 행사 리스트들
-                        mainPageFestivalListResponseDtoObjectMap.put("eventFilter", mainPageFestivalListResponseDtos);
-                        // eventNames는 상단바에 위치한 조회수에 의한 행사명 리스트
-                        mainPageFestivalListResponseDtoObjectMap.put("eventNames", mainPageResponseDtoNames);
-                        // countOrganizer는 등록된 주최자 전체 인원 수 반환
-                        mainPageFestivalListResponseDtoObjectMap.put("countOrganizer", countOrganizer);
-                        // organizers는 보여질 주최자 인원 수
-                        mainPageFestivalListResponseDtoObjectMap.put("organizers", mainPageOrganizerListDtos);
-
-                        return ResponseEntity.ok().body(mainPageFestivalListResponseDtoObjectMap);
-                    }
+                    return ResponseEntity.ok().body(mainPageFestivalListResponseDtoObjectMap);
                 } catch (IllegalArgumentException e) {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
@@ -222,7 +199,7 @@ public class MainPageController {
                 }
             }
         } else {                                // 로그인 하지 않은 사용자일 경우 (필터링 여부)
-            if(city !=null){                    // 필터링이 된 경우
+            if(city !=null || category != null || keywordName != null){                    // 필터링이 된 경우
                 try {
                     Long regionId = mainPageService.getRegionIdFilter(city, addressLine);
                     // 1. 조회순으로 보여지는 행사 9개
