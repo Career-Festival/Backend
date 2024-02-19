@@ -13,9 +13,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EventPageOrganizerResponseDto {
+
+    private Long organizerId;
+
     private String organizerName;
     private String organizerProfileFileUrl;
     public EventPageOrganizerResponseDto (Organizer organizer) {
+        this.organizerId = organizer.getId();
         this.organizerName = organizer.getOrganizerName();
         this.organizerProfileFileUrl = organizer.getOrganizerProfileFileUrl();
     }
