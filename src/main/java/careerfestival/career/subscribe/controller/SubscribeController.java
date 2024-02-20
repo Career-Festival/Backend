@@ -102,7 +102,7 @@ public class SubscribeController {
             Page<RegisterMainResponseDto> registerMainResponseDtos
                     = registerService.getEventList(organizerId, pageable);
 
-            List<SubscribeResponseDto> subs = subscribeService.getAllSubscribeByUser(organizerId);
+            List<SubscribeResponseDto> subs = subscribeService.getAllSubscribeByUser(organizerUserId);
             int totalSubsCount = subs.size();
             Map<String, Object> profile = new HashMap<>();
             profile.put("organizerName", organizerName);
