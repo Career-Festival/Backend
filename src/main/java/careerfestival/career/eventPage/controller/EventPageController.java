@@ -59,6 +59,7 @@ public class EventPageController {
         // 페이징 정보를 생성합니다.
         // 댓글을 조회합니다.
         try {
+            eventPageService.updateByHits(eventId);
             List<EventPageResponseDto> eventInformation = eventPageService.getEvents(eventId);
             EventPageOrganizerResponseDto organizerInformation = eventPageService.getOrganizer(eventId);
             StatisticsDto statistics = StatisticsDto.fromEntity(eventPageService.findEvent(eventId));

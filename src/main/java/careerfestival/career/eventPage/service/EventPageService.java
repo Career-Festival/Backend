@@ -14,6 +14,7 @@ import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,22 +34,33 @@ public class EventPageService {
                 .collect(Collectors.toList());
     }
 
-    public EventPageOrganizerResponseDto getOrganizer(Long eventId){
+    public EventPageOrganizerResponseDto getOrganizer(Long eventId) {
         Optional<Event> eventOptional = eventRepository.findById(eventId);
-        if(eventOptional.isPresent()){
-          Event event = eventOptional.get();
-          Organizer organizer = event.getOrganizer();
-          return new EventPageOrganizerResponseDto(organizer);
-        }
-        else{
+        if (eventOptional.isPresent()) {
+            Event event = eventOptional.get();
+            Organizer organizer = event.getOrganizer();
+            return new EventPageOrganizerResponseDto(organizer);
+        } else {
             throw new UserOrEventNotFoundException("Event or Organizer not found");
         }
     }
 
-    public Event findEvent(Long eventId){
+    public Event findEvent(Long eventId) {
 
         Optional<Event> findEvent = eventRepository.findById(eventId);
         return findEvent.get();
     }
 
+    public List<Event> updateByHits(Long eventId) {
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+
+        if (optionalEvent.isPresent()) {
+            Event event = optionalEvent.get();
+            event.setHits(event.getHits() + 1);
+            eventRepository.save(event);
+            return Arrays.asList(event);
+        } else {
+            throw new UserOrEventNotFoundException("Event not fount");
+        }
+    }
 }
