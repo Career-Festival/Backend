@@ -127,29 +127,11 @@ public class RegisterService {
 
         try {
             if(!eventInformImage.isEmpty()){
-                // 이미지 리사이징
-                BufferedImage resizedImage = ImageUtils.resizeImage(eventInformImage, 600, 400);
-
-                // BufferedImage를 byte[]로 변환
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(resizedImage, getFileExtension(eventInformImage.getOriginalFilename()), baos);
-                byte[] resizedImageBytes = baos.toByteArray();
-
-                // byte[]를 MultipartFile로 변환
-                MultipartFile multipartFile = new MockMultipartFile(
-                        "resized_" + eventInformImage.getOriginalFilename(),
-                        eventInformImage.getOriginalFilename(),
-                        eventInformImage.getContentType(),
-                        resizedImageBytes
-                );
-
                 // S3에 업로드하고 URL 받기
-                String storedFileName = s3Uploader.upload(multipartFile, "event_inform");
-
+                String storedFileName = s3Uploader.upload(eventInformImage, "event_inform");
                 // 이벤트에 이미지 URL 설정하고 저장
                 event.setEventInformFileUrl(storedFileName);
                 organizer.updateCountEvent();
-                eventRepository.save(event);
             } else {
                 throw new Exception();
             }
@@ -158,9 +140,6 @@ public class RegisterService {
         }
         eventRepository.save(event);
     }
-
-
-
 
 
     // 주최자가 등록한 행사 목록 반환
