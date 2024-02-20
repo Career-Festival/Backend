@@ -24,19 +24,19 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     Long findMaxOrderNumber();
 
     @Query(value = "(SELECT c.* " +
-            "FROM Inquiry c " +
+            "FROM inquiry c " +
             "WHERE c.event_id = :eventId " +
             "AND c.is_parent = 1 " +
             "ORDER BY c.order_number DESC , c.created_at DESC " +
             "LIMIT :pageStandard OFFSET :setOff) " +
             "UNION ALL " +
             "(SELECT c.* " +
-            "FROM Inquiry c " +
+            "FROM inquiry c " +
             "WHERE c.event_id = :eventId " +
             "AND c.is_parent = 0 " +
             "AND c.order_number IN ( " +
             "    SELECT c.id " +
-            "    FROM Inquiry c " +
+            "    FROM inquiry c " +
             "    WHERE c.event_id = :eventId " +
             "    AND c.is_parent = 1 " +
             "ORDER BY order_number ASC, created_at ASC" +

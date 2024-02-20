@@ -7,7 +7,6 @@ import careerfestival.career.domain.mapping.*;
 import careerfestival.career.participate.dto.StatisticsDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
