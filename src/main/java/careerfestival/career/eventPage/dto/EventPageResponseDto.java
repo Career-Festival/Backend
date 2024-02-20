@@ -4,6 +4,7 @@ import careerfestival.career.domain.Event;
 import careerfestival.career.domain.enums.Category;
 import careerfestival.career.domain.enums.KeywordName;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class EventPageResponseDto {
     private String eventMainImageUrl;
     private String eventInformImageUrl;
 
+    private String managerName;
+    private String managerEmail;
+
     public static EventPageResponseDto fromEntity(Event event){
         return EventPageResponseDto.builder()
                 .eventId(event.getId())
@@ -46,6 +50,8 @@ public class EventPageResponseDto {
                 .eventEnd(event.getEventEnd())
                 .eventMainImageUrl(event.getEventMainFileUrl())
                 .eventInformImageUrl(event.getEventInformFileUrl())
+                .managerName(event.getManagerName())
+                .managerEmail(event.getManagerEmail())
                 .build();
     }
 }

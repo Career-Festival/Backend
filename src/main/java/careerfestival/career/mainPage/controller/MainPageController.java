@@ -141,8 +141,8 @@ public class MainPageController {
             @RequestParam(value = "keywordName", required = false) List<KeywordName> keywordName,
             @RequestParam(value = "city", required = false) String city,          // 지역은 1개에 대해서만 필터링 진행
             @RequestParam(value = "addressLine", required = false) String addressLine,          // 지역은 1개에 대해서만 필터링 진행
-            @PageableDefault(size = 9, sort = "hits", direction = Sort.Direction.DESC) Pageable pageable) {
-
+            @PageableDefault(size = 9, sort = "hits", direction = Sort.Direction.DESC) Pageable pageable)
+    {
         if (customUserDetails != null) {        // 로그인 된 사용자일 경우
             Long regionId = mainPageService.getRegionId(customUserDetails.getUsername());
             if (regionId != null) {                                                             // 기본적으로 (부가정보)까지 입력을 받은 사용자의 경우 -> 지역에 의한 필터링 정보를 보여줘야함

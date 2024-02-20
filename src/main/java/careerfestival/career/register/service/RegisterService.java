@@ -69,10 +69,10 @@ public class RegisterService {
                 } else {
                     Gender organizerGender = organizer.getUser().getGender();
                     if(Gender.남성.equals(organizerGender)){
-                        organizer.setOrganizerProfileFileUrl("classpath:Male_Profile.png");
+                        organizer.setOrganizerProfileFileUrl("https://careerfestival.s3.ap-northeast-2.amazonaws.com/gender_image/Male_Profile.png");
                     }
                     else{
-                        organizer.setOrganizerProfileFileUrl("classpath:Female_Profile.png");
+                        organizer.setOrganizerProfileFileUrl("https://careerfestival.s3.ap-northeast-2.amazonaws.com/gender_image/Female_Profile.png");
                     }
                 }
                 organizerRepository.save(organizer);
@@ -125,15 +125,37 @@ public class RegisterService {
             e.printStackTrace();
         }
 
-        try{
+        try {
             if(!eventInformImage.isEmpty()){
-                String storedFileName = s3Uploader.upload(eventInformImage, "event_main");
+                // 이미지 리사이징
+                BufferedImage resizedImage = ImageUtils.resizeImage(eventInformImage, 600, 400);
+
+                // BufferedImage를 byte[]로 변환
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(resizedImage, getFileExtension(eventInformImage.getOriginalFilename()), baos);
+                byte[] resizedImageBytes = baos.toByteArray();
+
+                // byte[]를 MultipartFile로 변환
+                MultipartFile multipartFile = new MockMultipartFile(
+                        "resized_" + eventInformImage.getOriginalFilename(),
+                        eventInformImage.getOriginalFilename(),
+                        eventInformImage.getContentType(),
+                        resizedImageBytes
+                );
+
+                // S3에 업로드하고 URL 받기
+                String storedFileName = s3Uploader.upload(multipartFile, "event_inform");
+
+                // 이벤트에 이미지 URL 설정하고 저장
                 event.setEventInformFileUrl(storedFileName);
+                organizer.updateCountEvent();
+                eventRepository.save(event);
+            } else {
+                throw new Exception();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
         eventRepository.save(event);
     }
 

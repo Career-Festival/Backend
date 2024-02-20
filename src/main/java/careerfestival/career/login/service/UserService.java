@@ -60,9 +60,9 @@ public class UserService {
         Gender gender = findUser.getGender();
 
         if(Gender.남성.equals(gender)){
-            findUser.updateUserProfileFileUrl("classpath:Male_Profile.png");
+            findUser.updateUserProfileFileUrl("https://careerfestival.s3.ap-northeast-2.amazonaws.com/gender_image/Male_Profile.png");
         } else{
-            findUser.updateUserProfileFileUrl("classpath:Female_Profile.png");
+            findUser.updateUserProfileFileUrl("https://careerfestival.s3.ap-northeast-2.amazonaws.com/gender_image/Female_Profile.png");
         }
     }
 
