@@ -98,14 +98,16 @@ public class SubscribeController {
             System.out.println(organizerId + "주최자 id");
             System.out.println(organizerUserId + "주최자의 유저 id");
             String organizerName = registerService.getOrganizerName(organizerId);
+            String organizerProfileImage = organizerRepository.findByEncryptedEmail(fromUserId).getOrganizerProfileFileUrl();
             int getEventCount = registerService.getCountRegisterEvent(organizerUserId);
             Page<RegisterMainResponseDto> registerMainResponseDtos
                     = registerService.getEventList(organizerId, pageable);
 
-            List<SubscribeResponseDto> subs = subscribeService.getAllSubscribeByUser(organizerId);
+            List<SubscribeResponseDto> subs = subscribeService.getAllSubscribeByUser(organizerUserId);
             int totalSubsCount = subs.size();
             Map<String, Object> profile = new HashMap<>();
             profile.put("organizerName", organizerName);
+            profile.put("organizerProfileImage", organizerProfileImage);
             // 구독자 관련 코드 추가 작성 필요
             profile.put("festivalList", registerMainResponseDtos);
             profile.put("festivalCount", getEventCount);
