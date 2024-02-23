@@ -201,7 +201,11 @@ public class MainPageController {
         } else {                                // 로그인 하지 않은 사용자일 경우 (필터링 여부)
             if(city !=null || category != null || keywordName != null){                    // 필터링이 된 경우
                 try {
-                    Long regionId = mainPageService.getRegionIdFilter(city, addressLine);
+                    Long regionId = null;
+                    if (city != null) {
+                        regionId = mainPageService.getRegionIdFilter(city, addressLine);
+                    }
+
                     // 1. 조회순으로 보여지는 행사 9개
                     Page<MainPageFestivalListResponseDto> mainPageFestivalListResponseDtos
                             = mainPageService.getEventsFiltered(category, keywordName, regionId, pageable);
@@ -209,7 +213,6 @@ public class MainPageController {
                     List<MainPageResponseDto> mainPageResponseDtoNames = mainPageService.getEventNames();
                     // 3. (219명의 주최자) 정보 입력 공간
                     int countOrganizer = mainPageService.getOrganizerCount();
-
                     // 4. 주최자 정보 페이지 형태 반환
                     Pageable organizerPageable = PageRequest.of(0, 10, Sort.by("countEvent").descending());
                     Page<MainPageOrganizerListResponseDto> mainPageOrganizerListDtos = mainPageService.getOrganizers(organizerPageable);
@@ -234,10 +237,17 @@ public class MainPageController {
                     List<MainPageResponseDto> mainPageResponseDtoNames = mainPageService.getEventNames();
                     // 2. 조회수에 의한 정렬 리스트
                     List<MainPageResponseDto> mainPageResponseDtoViews = mainPageService.getEventsHitsDesc();
+                    // 3. (219명의 주최자) 정보 입력 공간
+                    int countOrganizer = mainPageService.getOrganizerCount();
+                    // 4. 주최자 정보 페이지 형태 반환
+                    Pageable organizerPageable = PageRequest.of(0, 10, Sort.by("countEvent").descending());
+                    Page<MainPageOrganizerListResponseDto> mainPageOrganizerListDtos = mainPageService.getOrganizers(organizerPageable);
 
                     Map<String, Object> mainPageResponseDtoObjectMap = new HashMap<>();
                     mainPageResponseDtoObjectMap.put("eventViews", mainPageResponseDtoViews);
                     mainPageResponseDtoObjectMap.put("eventNames", mainPageResponseDtoNames);
+                    mainPageResponseDtoObjectMap.put("countOrganizer", countOrganizer);
+                    mainPageResponseDtoObjectMap.put("organizers", mainPageOrganizerListDtos);
 
                     return ResponseEntity.ok().body(mainPageResponseDtoObjectMap);
                 } catch (IllegalArgumentException e) {
